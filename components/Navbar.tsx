@@ -96,7 +96,7 @@ export default function Navbar() {
             .select('*')
             .eq('is_active', true)
             .order('sort_order')
-          
+
           if (fallbackData) {
             const parentCategories = fallbackData.filter(c => !c.parent_id)
             const childCategories = fallbackData.filter(c => c.parent_id)
@@ -130,7 +130,7 @@ export default function Navbar() {
             .select('*')
             .eq('is_active', true)
             .order('sort_order')
-          
+
           if (fallbackData) {
             const parentCategories = fallbackData.filter(c => !c.parent_id)
             const childCategories = fallbackData.filter(c => c.parent_id)
@@ -341,7 +341,7 @@ export default function Navbar() {
 
               {user ? (
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                     className="hover:text-red-600 transition-colors flex items-center gap-1"
                   >
@@ -392,16 +392,7 @@ export default function Navbar() {
 
       {/* MOBILE NAVBAR - Only visible on small screens */}
       <nav className="bg-white/95 backdrop-blur-sm text-gray-900 md:hidden fixed w-full z-50 border-b border-gray-200">
-        <div className="flex items-center justify-between h-14 px-4">
-          {/* Menu Button */}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+        <div className="flex items-center justify-between h-18 px-4">
 
           {/* Logo */}
           <Link href="/" className="flex items-center">
@@ -409,7 +400,7 @@ export default function Navbar() {
               <img
                 src={siteSettings.logo}
                 alt={siteSettings.site_name || 'Agape Gear'}
-                className="h-22 w-auto object-contain"
+                className="h-15 w-auto object-contain"
               />
             ) : (
               <span className="text-xl font-bold">
@@ -425,17 +416,27 @@ export default function Navbar() {
               onClick={() => setSearchModalOpen(true)}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
 
             {/* Cart Icon */}
             <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </Link>
+
+            {/* Menu Button */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
@@ -448,15 +449,16 @@ export default function Navbar() {
 
       {/* MOBILE SIDEBAR */}
       <div
-        className={`fixed top-0 left-0 h-full w-72 bg-white text-gray-900 z-50 md:hidden transform transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed top-0 right-0 h-full w-82 bg-white text-gray-900 z-50 md:hidden transform transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0 opacity-95' : 'translate-x-full opacity-0'}`}
       >
+
         {/* Sidebar Header */}
-        <div className={`flex items-center justify-between p-3 border-b border-gray-200 ${sidebarOpen ? 'animate-slide-in' : ''}`}>
+        <div className={`flex items-center justify-between ${sidebarOpen ? 'animate-slide-in ml-4' : ''}`}>
           {siteSettings.logo ? (
             <img
               src={siteSettings.logo}
               alt={siteSettings.site_name || 'Agape Gear'}
-              className="h-20 w-auto object-contain"
+              className="h-15 w-auto object-contain"
             />
           ) : (
             <span className="text-2xl font-bold">
@@ -465,9 +467,9 @@ export default function Navbar() {
           )}
           <button
             onClick={() => setSidebarOpen(false)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors mr-4"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -491,7 +493,7 @@ export default function Navbar() {
                     className="flex-1"
                   >
                     <div className="p-3 hover:bg-gray-100 rounded-lg group">
-                      <span className="text-lg font-medium group-hover:text-red-600 transition-colors uppercase">
+                      <span className="text-sm font-semibold group-hover:text-red-600 transition-colors uppercase">
                         {category.name}
                       </span>
                     </div>
@@ -503,7 +505,7 @@ export default function Navbar() {
                       className="p-3 hover:bg-gray-100 rounded-lg"
                     >
                       <svg
-                        className={`w-5 h-5 text-gray-500 transition-transform ${openDropdown === category.id ? 'rotate-180' : ''}`}
+                        className={`w-6 h-6 text-gray-500 transition-transform ${openDropdown === category.id ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -550,7 +552,7 @@ export default function Navbar() {
                     <svg className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    <span className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
                       My Profile
                     </span>
                   </div>
@@ -564,7 +566,7 @@ export default function Navbar() {
                     <svg className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    <span className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
                       My Orders
                     </span>
                   </div>
@@ -580,7 +582,7 @@ export default function Navbar() {
                     <svg className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    <span className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
                       Sign Out
                     </span>
                   </div>
@@ -596,7 +598,7 @@ export default function Navbar() {
                   <svg className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span className="text-lg font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
+                  <span className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors uppercase">
                     Account
                   </span>
                 </div>

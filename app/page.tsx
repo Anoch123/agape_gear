@@ -291,7 +291,7 @@ export default function Home() {
           <ProductCarousel products={accessoriesProducts} productsTitle="Accessories" shopAllLink="/products?filter=accessories" />
 
           {/* Advertisement Section */}
-          <section className="w-full py-5 md:py-16 px-4">
+          <section className="w-full px-4 bg-gray-100 py-16">
             <div className="relative w-full h-[300px] md:h-[400px] max-w-7xxl mx-auto overflow-hidden rounded-2xl group">
 
               {/* Background Image */}
