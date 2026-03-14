@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
 import ProductCarousel from '@/components/widgets/ProductCarousel'
 
@@ -13,6 +11,13 @@ interface HeroSettings {
   mobile_hero_image: string
   hero_cta_text: string
   hero_cta_link: string
+}
+
+interface Category {
+  id: string
+  name: string
+  slug: string
+  image_url: string
 }
 
 interface Product {
@@ -27,9 +32,13 @@ interface Product {
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [newProducts, setNewProducts] = useState<Product[]>([])
+  const [accessoriesProducts, setAccessoriesProducts] = useState<Product[]>([])
+  const [tshirts, setTshirts] = useState<Product[] | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null)
-
+  
   useEffect(() => {
     const fetchData = async () => {
       const supabase = createClient()
@@ -63,20 +72,58 @@ export default function Home() {
         .select('*')
         .eq('is_active', true)
         .eq('is_featured', true)
+        .limit(10)
 
       if (data) setFeaturedProducts(data)
+
+      // Fetch new products
+      const { data: newProductsData } = await supabase
+        .from('products')
+        .select('*, categories!inner(slug)')
+        .eq('is_active', true)
+        .eq('categories.slug', 'new')
+        .limit(10)
+
+      if (newProductsData) setNewProducts(newProductsData)
+
+      // Fetch categories with images
+      const { data: categoriesData } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .is('parent_id', null)
+        .order('sort_order')
+
+      // Filter categories that have images locally
+      if (categoriesData) {
+        setCategories(categoriesData.filter(c => c.image_url && c.image_url !== ''))
+      }
+
+      // Fetch accessories products
+      const { data: accessoriesData } = await supabase
+        .from('products')
+        .select('*, categories!inner(slug)')
+        .eq('is_active', true)
+        .eq('categories.slug', 'accessories')
+        .limit(10)
+
+      if (accessoriesData) setAccessoriesProducts(accessoriesData)
+
+      // Fetch tshrits products
+      const { data: tshirtsData } = await supabase
+        .from('products')
+        .select('*, categories!inner(slug)')
+        .eq('is_active', true)
+        .eq('categories.slug', 'men-t-shirts')
+        .limit(10)
+
+      if (tshirtsData) setTshirts(tshirtsData)
+
       setLoading(false)
     }
 
     fetchData()
   }, [])
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-LK', {
-      style: 'currency',
-      currency: 'LKR',
-    }).format(price)
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -192,7 +239,98 @@ export default function Home() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
         </div>
       ) : (
-        <ProductCarousel products={featuredProducts} productsTitle="Featured" shopAllLink="/products" />
+        <div>
+          <ProductCarousel products={featuredProducts} productsTitle="Featured Products" shopAllLink="/products?filter=featured" />
+          <ProductCarousel products={newProducts} productsTitle="New Arrivals" shopAllLink="/products?filter=new" />
+
+          {/* Categories as Tall Cards under New Arrivals */}
+          {categories.length > 0 && (
+            <section className="py-12 md:py-16 bg-gray-100 w-full">
+              <div className="w-full px-0">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
+                  {categories.map((category) => (
+                    <a
+                      key={category.id}
+                      href={`/products?category=${category.slug}`}
+                      className="group relative block overflow-hidden"
+                    >
+                      {/* Tall Card - Aspect ratio for tall appearance */}
+                      <div className="aspect-[3/5] md:aspect-[2/3] relative h-full min-h-[300px] md:min-h-[400px]">
+                        {category.image_url ? (
+                          <img
+                            src={category.image_url}
+                            alt={category.name}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gray-300 flex items-center justify-center">
+                            <span className="text-gray-500 text-lg">{category.name}</span>
+                          </div>
+                        )}
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                        {/* Category Name */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                          <h3 className="text-white text-lg md:text-xl font-bold uppercase tracking-wide">
+                            {category.name}
+                          </h3>
+                          <span className="text-white/80 text-sm md:text-base opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            Shop Now →
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          <ProductCarousel products={accessoriesProducts} productsTitle="Accessories" shopAllLink="/products?filter=accessories" />
+
+          {/* Advertisement Section */}
+          <section className="w-full py-5 md:py-16 px-4">
+            <div className="relative w-full h-[300px] md:h-[400px] max-w-7xxl mx-auto overflow-hidden rounded-2xl group">
+
+              {/* Background Image */}
+              <img
+                src="/ad-banner.png"
+                alt="Special Offer"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20"></div>
+
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-start justify-center min-h-[260px] md:min-h-[340px] px-8 md:px-16 py-10 text-white">
+
+                <span className="text-sm uppercase tracking-[3px] text-white/70 mb-3">
+                  Limited Time
+                </span>
+
+                <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-wide mb-4">
+                  Summer Collection
+                </h2>
+
+                <p className="text-white/80 max-w-md mb-6 text-sm md:text-base">
+                  Discover premium streetwear designed for comfort and style.
+                  Get exclusive discounts on selected items.
+                </p>
+
+                <a
+                  href="/products"
+                  className="inline-block bg-white text-black px-8 py-3 text-sm font-semibold uppercase tracking-wide transition-all duration-300 hover:bg-gray-200"
+                >
+                  Shop Now
+                </a>
+
+              </div>
+            </div>
+          </section>
+
+          <ProductCarousel products={tshirts || []} productsTitle="T-Shirts" shopAllLink="/products?filter=men-t-shirts" />
+        </div>
       )}
     </div>
   )

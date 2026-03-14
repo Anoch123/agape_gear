@@ -101,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-gray-100">
       {/* Mobile Header */}
       <div className="lg:hidden bg-black text-white px-4 py-3 flex items-center justify-between">
-        <span className="font-bold text-lg">Agape Admin</span>
+        <span className="font-bold text-lg">{siteName} Admin</span>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2"
@@ -162,14 +162,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-h-screen p-8">
+        <main className="flex-1 min-h-screen p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>
 
       {/* Admin Footer */}
-      <footer className="bg-white border-t border-gray-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="bg-white border-t border-gray-200 py-4 px-4 md:px-6">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-3">
             {footerLogo || logo ? (
               <img src={footerLogo || logo} alt={siteName} className="h-8 w-auto object-contain" />
@@ -178,7 +178,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <span className="text-sm text-gray-500">Admin Panel</span>
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 text-center sm:text-right">
             © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
         </div>

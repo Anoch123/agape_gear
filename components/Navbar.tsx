@@ -79,23 +79,70 @@ export default function Navbar() {
   // Fetch categories for dropdown
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order')
+      try {
+        // First try to fetch with show_in_navbar filter
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .eq('is_active', true)
+          .eq('show_in_navbar', true)
+          .order('sort_order')
 
-      if (data) {
-        // Organize categories into parent/children structure
-        const parentCategories = data.filter(c => !c.parent_id)
-        const childCategories = data.filter(c => c.parent_id)
+        if (error) {
+          // If the column doesn't exist yet, fall back to showing all active categories
+          console.log('show_in_navbar column not found, falling back to all categories')
+          const { data: fallbackData } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order')
+          
+          if (fallbackData) {
+            const parentCategories = fallbackData.filter(c => !c.parent_id)
+            const childCategories = fallbackData.filter(c => c.parent_id)
+            const categoriesWithChildren = parentCategories.map(parent => ({
+              ...parent,
+              children: childCategories.filter(child => child.parent_id === parent.id)
+            }))
+            setCategories(categoriesWithChildren)
+          }
+          return
+        }
 
-        const categoriesWithChildren = parentCategories.map(parent => ({
-          ...parent,
-          children: childCategories.filter(child => child.parent_id === parent.id)
-        }))
+        if (data) {
+          // Organize categories into parent/children structure
+          const parentCategories = data.filter(c => !c.parent_id)
+          const childCategories = data.filter(c => c.parent_id)
 
-        setCategories(categoriesWithChildren)
+          const categoriesWithChildren = parentCategories.map(parent => ({
+            ...parent,
+            children: childCategories.filter(child => child.parent_id === parent.id)
+          }))
+
+          setCategories(categoriesWithChildren)
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err)
+        // Fallback: fetch all active categories
+        try {
+          const { data: fallbackData } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order')
+          
+          if (fallbackData) {
+            const parentCategories = fallbackData.filter(c => !c.parent_id)
+            const childCategories = fallbackData.filter(c => c.parent_id)
+            const categoriesWithChildren = parentCategories.map(parent => ({
+              ...parent,
+              children: childCategories.filter(child => child.parent_id === parent.id)
+            }))
+            setCategories(categoriesWithChildren)
+          }
+        } catch (fallbackErr) {
+          console.error('Fallback also failed:', fallbackErr)
+        }
       }
     }
 
@@ -194,7 +241,7 @@ export default function Navbar() {
   return (
     <>
       {/* DESKTOP NAVBAR - Visible on md and above */}
-      <nav className="bg-white text-gray-900 hidden md:block border-b border-gray-200">
+      <nav className="bg-white text-gray-900 hidden md:block border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-screen-2xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-18">
             {/* Logo */}
