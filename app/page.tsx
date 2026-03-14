@@ -34,10 +34,12 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [newProducts, setNewProducts] = useState<Product[]>([])
   const [accessoriesProducts, setAccessoriesProducts] = useState<Product[]>([])
-  const [tshirts, setTshirts] = useState<Product[] | null>(null)
+  const [tshirts, setTshirts] = useState<Product[]>([])
+
   const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null)
+  
+  const [loading, setLoading] = useState(true)
   
   useEffect(() => {
     const fetchData = async () => {
@@ -126,7 +128,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
 
       {/* Hero Section */}
       {(heroSettings?.hero_image || heroSettings?.hero_title) ? (
@@ -240,7 +242,7 @@ export default function Home() {
         </div>
       ) : (
         <div>
-          <ProductCarousel products={featuredProducts} productsTitle="Featured Products" shopAllLink="/products?filter=featured" />
+          <ProductCarousel products={featuredProducts} productsTitle="Featured" shopAllLink="/products?filter=featured" />
           <ProductCarousel products={newProducts} productsTitle="New Arrivals" shopAllLink="/products?filter=new" />
 
           {/* Categories as Tall Cards under New Arrivals */}
